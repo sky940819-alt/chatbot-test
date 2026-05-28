@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenAI 챗봇</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>OpenAI 챗봇</h1>
+      <p>Open API를 사용해 간단한 챗봇을 구현했습니다.</p>
+    </header>
+
+    <section class="settings">
+      <h2>설정</h2>
+      <label>
+        모델 선택
+        <select id="modelSelect">
+          <option value="gpt-4o-mini">gpt-4o-mini</option>
+          <option value="gpt-4.1" selected>gpt-4.1</option>
+          <option value="gpt-3.5-turbo">gpt-3.5-turbo</option>
+        </select>
+      </label>
+      <label>
+        온도 (temperature)
+        <input id="temperatureInput" type="range" min="0" max="1" step="0.1" value="0.7" />
+        <span id="temperatureValue">0.7</span>
+      </label>
+      <label>
+        시스템 프롬프트
+        <textarea id="systemPrompt" rows="3" placeholder="챗봇 기본 동작을 정의하세요.">You are a helpful assistant.</textarea>
+      </label>
+    </section>
+
+    <section class="api-key">
+      <h2>API 키 등록</h2>
+      <label>
+        OpenAI API 키
+        <input id="apiKeyInput" type="password" placeholder="sk-..." />
+      </label>
+      <div class="key-actions">
+        <button id="saveApiKeyButton" type="button">저장</button>
+        <span id="apiKeyStatus"></span>
+      </div>
+      <p class="hint">API 키를 등록하면 서버에서 OpenAI 호출이 가능합니다. 브라우저에 임시 저장됩니다.</p>
+    </section>
+
+    <section class="advanced-settings">
+      <h2>추가 설정</h2>
+      <label class="checkbox-label">
+        <input id="autoSaveToggle" type="checkbox" /> 대화 자동 저장
+      </label>
+      <label>
+        세션 이름
+        <input id="sessionNameInput" type="text" placeholder="기본 세션" />
+      </label>
+      <div class="session-actions">
+        <button id="saveSessionButton" type="button">세션 저장</button>
+        <button id="loadSessionButton" type="button">세션 불러오기</button>
+        <button id="clearSessionButton" type="button">대화 초기화</button>
+      </div>
+      <label>
+        저장된 세션
+        <select id="sessionSelect"></select>
+      </label>
+    </section>
+
+    <section class="chat-area">
+      <div id="chatLog" class="chat-log"></div>
+
+      <form id="chatForm" class="chat-form">
+        <textarea id="userInput" rows="2" placeholder="메시지를 입력하세요..."></textarea>
+        <button type="submit">전송</button>
+      </form>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
