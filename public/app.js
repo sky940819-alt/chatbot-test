@@ -65,6 +65,22 @@ const saveSession = (name) => {
   apiKeyStatus.textContent = `세션 '${name}' 저장됨.`;
 };
 
+const parseJsonResponse = async (response) => {
+  const text = await response.text();
+  const contentType = response.headers.get('content-type') || '';
+  if (contentType.includes('application/json')) {
+    return JSON.parse(text);
+  }
+  try {
+    return JSON.parse(text);
+  } catch (err) {
+    const preview = text.trim().slice(0, 200).replace(/\s+/g, ' ');
+    throw new Error(response.ok
+      ? `서버 응답이 JSON이 아닙니다: ${preview}`
+      : `서버 오류 응답(백엔드가 실행 중인지 확인하세요): ${preview}`);
+  }
+};
+
 const loadSession = (name) => {
   const sessions = JSON.parse(localStorage.getItem('chatSessions') || '{}');
   const session = sessions[name];
@@ -93,9 +109,9 @@ const setApiKey = async (key) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ apiKey: key }),
     });
-    const data = await response.json();
+    const data = await parseJsonResponse(response);
     if (!response.ok) {
-      throw new Error(data.error || 'API 키 저장에 실패했습니다.');
+      throw new Error(data?.error || 'API 키 저장에 실패했습니다. 백엔드 서버가 실행 중인지 확인하세요.');
     }
     localStorage.setItem('openaiApiKey', key);
     apiKeyStatus.textContent = 'API 키가 등록되었습니다.';
@@ -154,9 +170,9 @@ chatForm.addEventListener('submit', async (event) => {
       body: JSON.stringify(payload),
     });
 
-    const data = await response.json();
+    const data = await parseJsonResponse(response);
     if (!response.ok) {
-      addMessage('assistant', `오류: ${data.error || '응답을 받지 못했습니다.'}`);
+      addMessage('assistant', `오류: ${data.error || '응답을 받지 못했습니다. 백엔드 서버를 확인하세요.'}`);
       if (autoSaveToggle.checked) saveSession(sessionNameInput.value.trim() || '기본 세션');
       saveHistory();
       return;
